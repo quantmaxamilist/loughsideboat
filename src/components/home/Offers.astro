@@ -1,0 +1,40 @@
+---
+// Plain four-offer strip (used on the variant without the Four Blades moment).
+import Photo from '../site/Photo.astro';
+import Arrow from '../site/Arrow.astro';
+import { offers } from '../../data/site';
+---
+<section class="off section" aria-labelledby="off-h">
+  <div class="container">
+    <p class="label label-row off__k" data-reveal>What we do</p>
+    <h2 id="off-h" class="display d2" data-reveal>Boats &amp; Services</h2>
+    <ol class="off__grid">
+      {offers.map((o, i) => (
+        <li data-reveal data-reveal-delay={i * 70}>
+          <a href={o.href} class="off__item">
+            <span class="off__media photo"><Photo name={o.photo} alt="" sizes="(max-width: 760px) 100vw, 25vw" /></span>
+            <span class="label off__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="display off__t">{o.title}</span>
+            <span class="off__d">{o.text}</span>
+            <Arrow class="off__arr" />
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .off__k { color: var(--blade); margin-bottom: var(--s-4); }
+  .off__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); margin-top: var(--s-7); }
+  .off__item { position: relative; display: grid; gap: var(--s-3); align-content: start; padding-top: var(--s-4); border-top: 1px solid var(--ink); height: 100%; }
+  .off__media { aspect-ratio: 4 / 5; border-radius: var(--radius); }
+  .off__media :global(img) { transition: transform 1s var(--ease-out); }
+  .off__item:hover .off__media :global(img) { transform: scale(1.04); }
+  .off__n { color: var(--blade); margin-top: var(--s-2); }
+  .off__t { font-size: var(--fs-h4); font-size: clamp(1.25rem, 1rem + 0.8vw, 1.75rem); line-height: 1.05; }
+  .off__d { color: var(--ink-2); font-size: 0.95rem; }
+  .off__arr { width: 20px; height: 20px; color: var(--blade); transition: transform var(--dur) var(--ease-out); }
+  .off__item:hover .off__arr { transform: translateX(4px); }
+  @media (max-width: 1000px) { .off__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .off__grid { grid-template-columns: minmax(0, 1fr); } .off__media { aspect-ratio: 16 / 10; } }
+</style>

@@ -1,0 +1,155 @@
+---
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/site/Photo.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import BoatCard from '../../components/boats/BoatCard.astro';
+import EnquiryBand from '../../components/site/EnquiryBand.astro';
+import { boats } from '../../data/boats';
+import { site, sellBand } from '../../data/site';
+import photos from '../../data/photos.json';
+export function getStaticPaths() { return boats.map((boat) => ({ params: { slug: boat.slug }, props: { boat } })); }
+const { boat } = Astro.props;
+const others = boats.filter((x) => x.slug !== boat.slug);
+const P = photos as any;
+const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1440).at(-1)}.webp`;
+---
+<Base title={`${boat.title} | Loughside`} description={`${boat.title} — ${boat.price}. ${boat.headline ?? ''} ${boat.body[0]}`} image={big(boat.photos[0])}>
+  <section class="bt">
+    <div class="container">
+      <nav class="label bt__crumb" aria-label="Breadcrumb"><a class="link-u" href="/boats-for-sale">Boats for Sale</a><span aria-hidden="true">/</span><span>{boat.make}</span></nav>
+      <div class="bt__top">
+        <div class="bt__gallery">
+          <button class="bt__main photo" type="button" data-open="0" aria-label={`Open photo 1 of ${boat.photos.length}`}>
+            <Photo name={boat.photos[0]} alt={boat.title} priority sizes="(max-width: 960px) 100vw, 60vw" />
+            {boat.status && <span class="bt__status label"><i></i>{boat.status}</span>}
+          </button>
+          <ul class="bt__thumbs">
+            {boat.photos.slice(1).map((ph, i) => (
+              <li><button class="photo" type="button" data-open={i + 1} aria-label={`Open photo ${i + 2} of ${boat.photos.length}`}><Photo name={ph} alt="" sizes="20vw" /></button></li>
+            ))}
+          </ul>
+        </div>
+        <div class="bt__info">
+          <p class="label bt__meta"><span>{boat.year}</span><span>{boat.make}</span></p>
+          <h1 class="display bt__h">{boat.title}</h1>
+          {boat.headline && <p class="lead bt__headline">{boat.headline}</p>}
+          <dl class="bt__facts">
+            <div><dt class="label">Price</dt><dd class="bt__price">{boat.price}</dd></div>
+            {boat.status && <div><dt class="label">Status</dt><dd>{boat.status}</dd></div>}
+            {boat.location && <div><dt class="label">Location</dt><dd>{boat.location}</dd></div>}
+          </dl>
+          <div class="bt__act">
+            <a class="btn" href={`/contact?boat=${boat.slug}`}>Enquire about this boat<Arrow /></a>
+            <a class="bt__tel" href={`tel:${site.phone.tel}`}><span class="label">Call {site.phone.who}</span>{site.phone.display}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="spec section on-mist">
+    <div class="container spec__grid">
+      <div class="spec__body">
+        {boat.body.map((p) => <p class="statement" data-reveal>{p}</p>)}
+        {boat.viewing && <p class="spec__view label" data-reveal>{boat.viewing}</p>}
+        {boat.priceNote && <p class="spec__view label" data-reveal>{boat.priceNote}</p>}
+      </div>
+      <div class:list={['spec__sheets', { 'spec__sheets--wide': boat.sections.length < 3 }]}>
+        {boat.sections.map((s) => (
+          <div class="spec__sheet" data-reveal>
+            <h2 class="label spec__h">{s.title}</h2>
+            <ul>{s.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  {others.length > 0 && (
+    <section class="more section">
+      <div class="container">
+        <div class="more__head"><h2 class="display d3">Also for sale</h2><a class="link-u label" href="/boats-for-sale">Back To Boats For Sale</a></div>
+        <div class="more__grid">{others.map((x, i) => <BoatCard boat={x} i={i} />)}</div>
+      </div>
+    </section>
+  )}
+  <EnquiryBand title={sellBand.title} text={sellBand.text} href="/contact?service=selling" />
+
+  <dialog class="lb" data-lightbox aria-label={`${boat.title} photos`}>
+    <img data-lb-img alt="" />
+    <p class="label lb__count" data-lb-count></p>
+    <button class="lb__btn lb__prev" type="button" data-lb-prev aria-label="Previous photo"><Arrow /></button>
+    <button class="lb__btn lb__next" type="button" data-lb-next aria-label="Next photo"><Arrow /></button>
+    <button class="lb__close" type="button" data-lb-close aria-label="Close"><i></i><i></i></button>
+  </dialog>
+  <script is:inline type="application/json" data-lb-list set:html={JSON.stringify(boat.photos.map((n) => ({ src: big(n), w: P[n].w, h: P[n].h })))}></script>
+</Base>
+<style>
+  .bt { padding-top: calc(var(--header-h) + var(--s-6)); padding-bottom: var(--s-8); background: var(--navy); color: var(--on-dark); }
+  .bt__crumb { display: flex; gap: 0.75em; color: var(--on-dark-3); margin-bottom: var(--s-5); }
+  .bt__crumb a { color: var(--on-dark-2); }
+  .bt__top { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-7); align-items: start; }
+  .bt__main { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; border-radius: var(--radius); cursor: zoom-in; }
+  .bt__status { position: absolute; left: var(--s-4); top: var(--s-4); display: inline-flex; align-items: center; gap: 0.55em; padding: 0.55em 0.8em; background: rgba(7, 19, 38, 0.82); color: var(--white); border-radius: var(--radius); }
+  .bt__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--go); }
+  .bt__thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-3); }
+  .bt__thumbs button { display: block; width: 100%; aspect-ratio: 1; border-radius: var(--radius); cursor: zoom-in; }
+  .bt__thumbs button :global(img), .bt__main :global(img) { transition: transform 0.8s var(--ease-out); }
+  .bt__thumbs button:hover :global(img) { transform: scale(1.06); }
+  .bt__meta { display: flex; gap: 1.1em; color: var(--lough-light); }
+  .bt__h { font-size: var(--fs-display-2); line-height: 1; margin-top: var(--s-3); }
+  .bt__headline { margin-top: var(--s-4); color: var(--on-dark-2); }
+  .bt__facts { display: grid; margin-top: var(--s-6); border-top: 1px solid var(--line-dark); }
+  .bt__facts div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); padding-block: 0.85rem; border-bottom: 1px solid var(--line-dark); }
+  .bt__facts dt { color: var(--on-dark-3); }
+  .bt__facts dd { text-align: right; }
+  .bt__price { font-family: var(--font-display); font-weight: 800; font-size: var(--fs-display-3); letter-spacing: -0.01em; }
+  .bt__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); margin-top: var(--s-6); }
+  .bt__tel { display: grid; font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.35; }
+  .bt__tel .label { color: var(--on-dark-3); font-size: 0.6875rem; }
+  .spec__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--s-8); align-items: start; }
+  .spec__body { display: grid; gap: var(--s-5); position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  .spec__view { color: var(--blade); }
+  .spec__sheets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-5); }
+  .spec__sheets--wide { grid-template-columns: minmax(0, 1fr); }
+  .spec__sheets--wide .spec__sheet ul { columns: 2; column-gap: var(--s-5); }
+  .spec__sheet { padding-top: var(--s-4); border-top: 2px solid var(--ink); }
+  .spec__h { color: var(--blade); margin-bottom: var(--s-3); }
+  .spec__sheet li { padding-block: 0.55rem; border-bottom: 1px solid var(--line); break-inside: avoid; }
+  .more__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; margin-bottom: var(--s-4); }
+  .more__head a { color: var(--blade); }
+  .more__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); }
+  .lb { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgba(5, 12, 26, 0.96); color: #fff; }
+  .lb[open] { display: grid; place-items: center; }
+  .lb::backdrop { background: rgba(5, 12, 26, 0.9); }
+  .lb img { max-width: min(92vw, 1100px); max-height: 82dvh; width: auto; height: auto; object-fit: contain; border-radius: var(--radius); }
+  .lb__count { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); color: rgba(255, 255, 255, 0.7); }
+  .lb__btn, .lb__close { position: absolute; width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--radius); background: rgba(255, 255, 255, 0.08); }
+  .lb__btn :global(.arr) { width: 20px; height: 20px; }
+  .lb__prev { left: 16px; top: 50%; transform: translateY(-50%) scaleX(-1); }
+  .lb__next { right: 16px; top: 50%; transform: translateY(-50%); }
+  .lb__close { right: 16px; top: 16px; }
+  .lb__close i { position: absolute; left: 15px; right: 15px; top: 25px; height: 1.5px; background: #fff; }
+  .lb__close i:first-child { transform: rotate(45deg); } .lb__close i:last-child { transform: rotate(-45deg); }
+  @media (max-width: 960px) { .bt__top, .spec__grid { grid-template-columns: minmax(0, 1fr); } .spec__body { position: static; } }
+  @media (max-width: 640px) { .spec__sheets, .more__grid { grid-template-columns: minmax(0, 1fr); } .spec__sheets--wide .spec__sheet ul { columns: 1; } .lb__btn { top: auto; bottom: 12px; transform: none; } .lb__prev { transform: scaleX(-1); } }
+</style>
+<script>
+  import { getLenis } from '../../scripts/core.js';
+  const dlg = document.querySelector('[data-lightbox]');
+  const listEl = document.querySelector('[data-lb-list]');
+  if (dlg && listEl) {
+    const list = JSON.parse(listEl.textContent || '[]');
+    const img = dlg.querySelector('[data-lb-img]');
+    const count = dlg.querySelector('[data-lb-count]');
+    let i = 0;
+    const show = (n) => { i = (n + list.length) % list.length; img.src = list[i].src; img.width = list[i].w; img.height = list[i].h; count.textContent = `Photo ${i + 1} of ${list.length}`; };
+    const close = () => { if (dlg.open) dlg.close(); getLenis()?.start(); };
+    document.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.open); dlg.showModal(); getLenis()?.stop(); }));
+    dlg.querySelector('[data-lb-prev]').addEventListener('click', () => show(i - 1));
+    dlg.querySelector('[data-lb-next]').addEventListener('click', () => show(i + 1));
+    dlg.querySelector('[data-lb-close]').addEventListener('click', close);
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
+    dlg.addEventListener('cancel', () => getLenis()?.start());
+    dlg.addEventListener('close', () => getLenis()?.start());
+    addEventListener('keydown', (e) => { if (!dlg.open) return; if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
+  }
+</script>

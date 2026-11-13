@@ -1,0 +1,36 @@
+---
+import Arrow from '../site/Arrow.astro';
+import { about } from '../../data/site';
+// Facts below are quoted from the About page copy ("for 20 years", "over 10 years as a marine engineer").
+const facts = [
+  { n: '20', unit: 'years', who: 'Jonny', text: 'around boats on Lough Erne, after initially setting up a successful independent boat detailing service.' },
+  { n: '10+', unit: 'years', who: 'John', text: 'as a marine engineer — there’s no job too big or small.' },
+];
+---
+<section class="ppl section">
+  <div class="container">
+    <p class="label label-row ppl__k" data-reveal>About Loughside</p>
+    <p class="display d3 ppl__statement" data-reveal>{about.intro}</p>
+    <div class="ppl__grid">
+      {facts.map((f, i) => (
+        <div class="ppl__fact" data-reveal data-reveal-delay={i * 90}>
+          <p class="display ppl__n">{f.n}<span>{f.unit}</span></p>
+          <p class="ppl__t"><strong>{f.who}</strong> — {f.text}</p>
+        </div>
+      ))}
+      <div class="ppl__more" data-reveal data-reveal-delay="180">
+        <a class="btn btn--ghost-dark" href="/about">Meet Jonny &amp; John<Arrow /></a>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .ppl__k { color: var(--blade); margin-bottom: var(--s-5); }
+  .ppl__statement { max-width: 30ch; font-weight: 700; }
+  .ppl__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) auto; gap: var(--s-6); align-items: end; margin-top: var(--s-8); border-top: 1px solid var(--line); padding-top: var(--s-6); }
+  .ppl__n { font-size: var(--fs-display-1); color: var(--blade); line-height: 0.9; display: flex; align-items: baseline; gap: 0.15em; }
+  .ppl__n span { font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-label); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ink-3); }
+  .ppl__t { margin-top: var(--s-4); max-width: 34ch; color: var(--ink-2); }
+  .ppl__t strong { color: var(--ink); }
+  @media (max-width: 860px) { .ppl__grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

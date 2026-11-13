@@ -1,0 +1,15 @@
+---
+// Loughside propeller mark, redrawn as vector from the old 512px logo (scripts/build-mark.mjs).
+import m from '../../data/mark.json';
+interface Props { class?: string; blade?: string; ring?: string; title?: string; spin?: boolean }
+const { class: cls = '', blade = 'var(--blade)', ring = 'currentColor', title } = Astro.props;
+---
+<svg class={`mark ${cls}`} viewBox="-290 -290 580 580" role={title ? 'img' : undefined} aria-hidden={title ? undefined : 'true'} aria-label={title}>
+  <g class="mark__blades" fill={blade}>
+    <path class="mark__blade" data-i="0" d={m.blade} />
+    <path class="mark__blade" data-i="1" d={m.blade} transform="rotate(90)" />
+    <path class="mark__blade" data-i="2" d={m.blade} transform="rotate(180)" />
+    <path class="mark__blade" data-i="3" d={m.blade} transform="rotate(270)" />
+  </g>
+  <path class="mark__ring" d={m.ring} fill="none" stroke={ring} stroke-width={m.ringWidth} stroke-linecap="round" />
+</svg>

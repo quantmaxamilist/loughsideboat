@@ -1,0 +1,51 @@
+---
+import Logo from './Logo.astro';
+import { nav, site, offers } from '../../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ftr on-deep">
+  <div class="container ftr__grid">
+    <div class="ftr__brand">
+      <a href="/" class="ftr__logo" aria-label="Loughside Boat Sales — home"><Logo tone="light" /></a>
+      <p class="ftr__intro">Independent boat brokerage, detailing and servicing on the Fermanagh loughs.</p>
+    </div>
+    <div>
+      <h2 class="label ftr__h">Boats &amp; Services</h2>
+      <ul class="ftr__list">
+        {offers.map((o) => (<li><a class="link-u" href={o.href}>{o.slug === 'brokerage' ? 'Brokerage' : o.title}</a></li>))}
+      </ul>
+    </div>
+    <div>
+      <h2 class="label ftr__h">Loughside</h2>
+      <ul class="ftr__list">
+        {nav.filter((n) => ['/about', '/contact'].includes(n.href)).map((n) => (<li><a class="link-u" href={n.href}>{n.label}</a></li>))}
+      </ul>
+    </div>
+    <div>
+      <h2 class="label ftr__h">Contact</h2>
+      <ul class="ftr__list ftr__contact">
+        {site.phones.map((p) => (<li><span class="label">{p.who}</span><a class="link-u" href={`tel:${p.tel}`}>{p.display}</a></li>))}
+        <li><span class="label">Email</span><a class="link-u" href={`mailto:${site.email}`}>{site.email}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container ftr__base">
+    <p>© {year} {site.copyright}</p>
+    <p>Lough Erne · County Fermanagh</p>
+  </div>
+</footer>
+<style>
+  .ftr { padding-top: var(--s-9); }
+  .ftr__grid { display: grid; grid-template-columns: 1.6fr 1fr 0.8fr 1.3fr; gap: var(--s-7) var(--s-6); padding-bottom: var(--s-8); }
+  .ftr__logo { display: block; height: 92px; width: max-content; }
+  .ftr__intro { margin-top: var(--s-5); max-width: 32ch; color: var(--on-dark-2); }
+  .ftr__h { color: var(--on-dark-3); margin-bottom: var(--s-4); font-weight: 500; }
+  .ftr__list { display: grid; gap: 0.35rem; }
+  .ftr__list a { display: inline-block; padding-block: 0.25rem; }
+  .ftr__contact li { display: grid; gap: 0; }
+  .ftr__contact .label { color: var(--on-dark-3); font-size: 0.6875rem; }
+  .ftr__contact a { font-family: var(--font-mono); font-size: 0.95rem; overflow-wrap: anywhere; }
+  .ftr__base { display: flex; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; padding-block: var(--s-5) var(--s-6); border-top: 1px solid var(--line-dark); color: var(--on-dark-3); font-size: var(--fs-small); }
+  @media (max-width: 900px) { .ftr__grid { grid-template-columns: 1fr 1fr; } .ftr__brand { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .ftr__grid { grid-template-columns: minmax(0, 1fr); } .ftr__logo { height: 76px; } }
+</style>

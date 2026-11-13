@@ -1,0 +1,33 @@
+---
+import BoatCard from '../boats/BoatCard.astro';
+import Arrow from '../site/Arrow.astro';
+import { boats } from '../../data/boats';
+import { boatsPage } from '../../data/site';
+interface Props { tone?: 'dark' | 'light' }
+const { tone = 'dark' } = Astro.props;
+---
+<section class:list={['lst section', tone === 'dark' ? 'on-dark' : 'on-mist']}>
+  <div class="container">
+    <div class="lst__head">
+      <div>
+        <p class="label label-row lst__k" data-reveal>{boats.length} boats listed</p>
+        <h2 class="display d2" data-reveal>Boats for sale</h2>
+      </div>
+      <p class="lst__intro" data-reveal>{boatsPage.intro}</p>
+    </div>
+    <div class="lst__grid">
+      {boats.map((b, i) => <BoatCard boat={b} tone={tone} i={i} />)}
+    </div>
+    <a class:list={['btn', tone === 'dark' ? 'btn--ghost' : 'btn--ghost-dark', 'lst__all']} href="/boats-for-sale" data-reveal>View Boats For Sale<Arrow /></a>
+  </div>
+</section>
+<style>
+  .lst__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-6); align-items: end; margin-bottom: var(--s-7); }
+  .lst__k { margin-bottom: var(--s-4); color: var(--blade); }
+  .on-dark .lst__k { color: var(--lough-light); }
+  .lst__intro { max-width: 44ch; color: var(--ink-2); justify-self: end; }
+  .on-dark .lst__intro { color: var(--on-dark-2); }
+  .lst__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--s-6); }
+  .lst__all { margin-top: var(--s-7); }
+  @media (max-width: 860px) { .lst__head, .lst__grid { grid-template-columns: minmax(0, 1fr); } .lst__intro { justify-self: start; } }
+</style>

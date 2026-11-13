@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /wow-a
+Disallow: /wow-b
+
+Sitemap: https://loughsideboatsales.co.uk/sitemap-index.xml

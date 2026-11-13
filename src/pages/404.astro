@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Arrow from '../components/site/Arrow.astro';
+---
+<Base title="Page not found | Loughside" noindex>
+  <PageHero kicker="404" title="Page not found" intro="The page you were looking for has moved or no longer exists." compact>
+    <div class="nf"><a class="btn btn--light" href="/">Home<Arrow /></a><a class="btn btn--ghost" href="/boats-for-sale">Boats for Sale<Arrow /></a></div>
+  </PageHero>
+</Base>
+<style>.nf { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }</style>

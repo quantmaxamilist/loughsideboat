@@ -1,0 +1,23 @@
+---
+// Responsive graded photo from public/img (built by scripts/photos.py). Width/height carried to prevent CLS.
+import photos from '../../data/photos.json';
+interface Props { name: string; alt: string; sizes?: string; class?: string; loading?: 'lazy' | 'eager'; priority?: boolean; pos?: string }
+const { name, alt, sizes = '100vw', class: cls = '', loading = 'lazy', priority = false, pos } = Astro.props;
+const p = (photos as any)[name];
+if (!p) throw new Error('unknown photo ' + name);
+const srcset = p.widths.map((w: number) => `/img/${name}-${w}.webp ${w}w`).join(', ');
+const largest = p.widths.filter((w: number) => w <= 1440).at(-1);
+---
+<img
+  class={cls}
+  src={`/img/${name}-${largest}.webp`}
+  srcset={srcset}
+  sizes={sizes}
+  width={p.w}
+  height={p.h}
+  alt={alt}
+  loading={priority ? 'eager' : loading}
+  fetchpriority={priority ? 'high' : undefined}
+  decoding="async"
+  style={pos ? `object-position:${pos}` : undefined}
+/>

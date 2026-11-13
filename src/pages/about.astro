@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Photo from '../components/site/Photo.astro';
+import Arrow from '../components/site/Arrow.astro';
+import EnquiryBand from '../components/site/EnquiryBand.astro';
+import { about as a } from '../data/site';
+---
+<Base title={a.title} description={a.intro}>
+  <PageHero kicker="About" title={a.h1} intro={a.intro} photo="pontoon" pos="50% 40%" cta="Request a valuation" href="/contact?service=selling" />
+  <section class="ab section">
+    <div class="container ab__grid">
+      {a.people.map((p, i) => (
+        <article class="ab__p" data-reveal data-reveal-delay={i * 90}>
+          <figure class:list={['ab__fig', p.photo ? 'photo' : 'ab__fig--blank']}>
+            {p.photo ? <Photo name={p.photo} alt={p.name} sizes="(max-width: 860px) 100vw, 45vw" pos="42% 40%" /> : <span class="label">Photo to follow</span>}
+          </figure>
+          <p class="label ab__k">{String(i + 1).padStart(2, '0')}</p>
+          <h2 class="display d2">{p.heading}</h2>
+          <div class="ab__text">{p.text.map((t) => <p>{t}</p>)}</div>
+        </article>
+      ))}
+    </div>
+    <div class="container ab__cta" data-reveal><a class="btn" href="/contact?service=selling">Request a valuation<Arrow /></a></div>
+  </section>
+  <EnquiryBand title={a.band.title} text={a.band.text} />
+</Base>
+<style>
+  .ab__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-8) var(--s-7); }
+  .ab__fig { aspect-ratio: 4 / 5; border-radius: var(--radius); margin-bottom: var(--s-5); }
+  .ab__fig--blank { display: grid; place-items: center; background: var(--mist); border: 1px dashed rgba(13, 22, 38, 0.22); color: var(--ink-3); }
+  .ab__k { color: var(--blade); margin-bottom: var(--s-2); }
+  .ab__text { display: grid; gap: var(--s-4); margin-top: var(--s-5); color: var(--ink-2); font-size: 1.0625rem; max-width: 52ch; }
+  .ab__cta { margin-top: var(--s-8); }
+  @media (max-width: 860px) { .ab__grid { grid-template-columns: minmax(0, 1fr); } .ab__fig { aspect-ratio: 4 / 4; } }
+</style>

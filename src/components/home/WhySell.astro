@@ -1,0 +1,41 @@
+---
+import Photo from '../site/Photo.astro';
+import Arrow from '../site/Arrow.astro';
+import { home } from '../../data/site';
+interface Props { tone?: 'white' | 'mist' }
+const { tone = 'white' } = Astro.props;
+const w = home.whySell;
+---
+<section class:list={['why section', { 'on-mist': tone === 'mist' }]}>
+  <div class="container why__grid">
+    <div class="why__copy">
+      <p class="label label-row why__k" data-reveal>Brokerage</p>
+      <h2 class="display d2 why__h" data-reveal>{w.title}</h2>
+      <p class="statement why__lead" data-reveal>{w.lead}</p>
+      <p class="why__intro" data-reveal>{w.listIntro}</p>
+      <ol class="why__list">
+        {w.list.map((item, i) => (<li data-reveal data-reveal-delay={i * 60}><span class="label">{String(i + 1).padStart(2, '0')}</span><span>{item}</span></li>))}
+      </ol>
+      <div class="why__act" data-reveal>
+        <a class="btn" href="/contact?service=selling">Send an Enquiry<Arrow /></a>
+        <a class="btn btn--ghost-dark" href="/brokerage">How brokerage works<Arrow /></a>
+      </div>
+    </div>
+    <figure class="why__fig photo" data-reveal>
+      <Photo name="stern" alt="Sea Ray bowrider moored at a pontoon" sizes="(max-width: 860px) 100vw, 40vw" />
+    </figure>
+  </div>
+</section>
+<style>
+  .why__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--s-8); align-items: center; }
+  .why__k { color: var(--blade); margin-bottom: var(--s-4); }
+  .why__h { max-width: 13ch; }
+  .why__lead { margin-top: var(--s-6); max-width: 30ch; color: var(--ink); }
+  .why__intro { margin-top: var(--s-6); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
+  .why__list { margin-top: var(--s-3); border-top: 1px solid var(--line); }
+  .why__list li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); align-items: baseline; padding-block: 0.95rem; border-bottom: 1px solid var(--line); font-size: 1.0625rem; }
+  .why__list .label { color: var(--blade); }
+  .why__act { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
+  .why__fig { aspect-ratio: 3 / 4; border-radius: var(--radius); }
+  @media (max-width: 860px) { .why__grid { grid-template-columns: minmax(0, 1fr); } .why__fig { aspect-ratio: 4 / 5; order: -1; max-height: 70svh; } }
+</style>

@@ -1,0 +1,58 @@
+---
+// WOW B — "The Polish" (detailing): WebGL on the client's own Sea Ray photo. The dull, oxidised state is an
+// effect applied to the photo for the animation — not a real "before" photo (noted in the delivery note).
+import Arrow from '../site/Arrow.astro';
+import { detailing } from '../../data/site';
+---
+<section class="pol section on-deep" data-pol aria-labelledby="pol-h">
+  <div class="container pol__grid">
+    <div class="pol__copy">
+      <p class="label label-row pol__k">Detailing</p>
+      <h2 id="pol-h" class="display d2">{detailing.band.title}</h2>
+      <p class="lead pol__t">{detailing.band.text}</p>
+      <ol class="pol__list">
+        {detailing.boxes.map((b, i) => (
+          <li data-pol-row><a href="/detailing" class="pol__row"><span class="label">{String(i + 1).padStart(2, '0')}</span><span class="pol__b">{b}</span><Arrow class="pol__arr" /></a></li>
+        ))}
+      </ol>
+      <a class="btn pol__cta" href="/contact?service=detailing">{detailing.cta}<Arrow /></a>
+    </div>
+    <div class="pol__stage" data-pol-stage>
+      <img data-pol-img src="/img/polish-hull-1210.webp" srcset="/img/polish-hull-800.webp 800w, /img/polish-hull-1210.webp 1210w" sizes="(max-width: 960px) 100vw, 55vw" width="1210" height="907" alt="Sea Ray bowrider moored at a pontoon on the lough" loading="lazy" decoding="async" />
+      <canvas data-pol-canvas aria-hidden="true"></canvas>
+      <button class="pol__replay" type="button" data-pol-replay hidden>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.7 0 3.2.8 4.2 2M12.5 1.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        Replay
+      </button>
+    </div>
+  </div>
+</section>
+<style>
+  .pol__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--s-8); align-items: center; }
+  .pol__k { color: var(--lough-light); margin-bottom: var(--s-4); }
+  .pol h2 { max-width: 12ch; }
+  .pol__t { margin-top: var(--s-5); color: var(--on-dark-2); max-width: 36ch; }
+  .pol__list { margin-top: var(--s-6); border-top: 1px solid var(--line-dark); }
+  .pol__row { display: grid; grid-template-columns: 3rem minmax(0, 1fr) 20px; align-items: center; padding-block: 1rem; border-bottom: 1px solid var(--line-dark); }
+  .pol__row .label { color: var(--on-dark-3); }
+  .pol__b { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h4); }
+  .pol__arr { width: 18px; height: 18px; color: var(--lough-light); transition: transform var(--dur) var(--ease-out); }
+  .pol__row:hover .pol__arr { transform: translateX(4px); }
+  .pol__cta { margin-top: var(--s-6); }
+  .pol__stage { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--navy-2); }
+  .pol__stage img, .pol__stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pol__stage canvas { opacity: 0; }
+  .pol__stage canvas.is-on { opacity: 1; }
+  .pol__replay { position: absolute; left: var(--s-4); bottom: var(--s-4); display: inline-flex; align-items: center; gap: 0.5em; min-height: 44px; padding: 0 0.9em; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); background: rgba(7, 19, 38, 0.78); border-radius: var(--radius); }
+  .pol__replay svg { width: 14px; height: 14px; }
+  @media (max-width: 960px) { .pol__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); } .pol__stage { order: -1; } }
+</style>
+<script>
+  const root = document.querySelector('[data-pol]');
+  if (root) {
+    // fetch, decode and compile in idle time after load, so nothing heavy happens while the visitor scrolls
+    const go = () => import('../../scripts/polish.js').then((m) => m.initPolish(root));
+    const idle = (fn) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 1200));
+    if (document.readyState === 'complete') idle(go); else addEventListener('load', () => idle(go), { once: true });
+  }
+</script>

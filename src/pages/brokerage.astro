@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Photo from '../components/site/Photo.astro';
+import Arrow from '../components/site/Arrow.astro';
+import EnquiryBand from '../components/site/EnquiryBand.astro';
+import { brokerage as b, sellBand } from '../data/site';
+---
+<Base title={b.title} description={`${b.intro} Independent, local broker on Lough Erne.`}>
+  <PageHero kicker="Brokerage" title={b.h1} intro={b.intro} photo="stern" pos="50% 62%" cta={b.cta} href="/contact?service=selling" />
+  <section class="bk section">
+    <div class="container">
+      <p class="label label-row bk__k" data-reveal>How it works</p>
+      <ol class="bk__steps">
+        {b.steps.map((s, i) => (
+          <li class="bk__step" data-reveal data-reveal-delay={i * 90}>
+            <span class="display bk__n">{i + 1}</span>
+            <h2 class="display bk__t">{s.title}</h2>
+            <p class="bk__d">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+  <section class="bkw section on-dark">
+    <div class="container bkw__grid">
+      <figure class="bkw__fig photo" data-reveal><Photo name="pontoon" alt="Sea Ray bowrider moored at a pontoon on the lough" sizes="(max-width: 860px) 100vw, 45vw" /></figure>
+      <div>
+        <p class="label label-row bkw__k" data-reveal>Brokerage</p>
+        <h2 class="display d2" data-reveal>{b.whyTitle}</h2>
+        <ol class="bkw__list">
+          {b.why.map((w, i) => (<li data-reveal data-reveal-delay={i * 50}><span class="label">{String(i + 1).padStart(2, '0')}</span><span>{w}</span></li>))}
+        </ol>
+        <ul class="bkw__points">
+          {b.points.map((p, i) => (<li data-reveal data-reveal-delay={i * 60}>{p}</li>))}
+        </ul>
+        <a class="btn bkw__cta" href="/contact?service=selling" data-reveal>{b.cta}<Arrow /></a>
+      </div>
+    </div>
+  </section>
+  <EnquiryBand title={sellBand.title} text={sellBand.text} href="/contact?service=selling" />
+</Base>
+<style>
+  .bk__k { color: var(--blade); margin-bottom: var(--s-6); }
+  .bk__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); counter-reset: s; }
+  .bk__step { position: relative; display: grid; gap: var(--s-4); align-content: start; padding-top: var(--s-5); border-top: 1px solid var(--ink); }
+  .bk__n { font-size: var(--fs-display-1); line-height: 0.85; color: var(--blade); }
+  .bk__t { font-size: var(--fs-display-3); line-height: 1.05; max-width: 12ch; }
+  .bk__d { color: var(--ink-2); max-width: 36ch; }
+  .bkw__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--s-8); align-items: center; }
+  .bkw__fig { aspect-ratio: 1; border-radius: var(--radius); }
+  .bkw__k { color: var(--lough-light); margin-bottom: var(--s-4); }
+  .bkw__list { margin-top: var(--s-6); border-top: 1px solid var(--line-dark); }
+  .bkw__list li { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); align-items: baseline; padding-block: 0.85rem; border-bottom: 1px solid var(--line-dark); font-size: 1.0625rem; }
+  .bkw__list .label { color: var(--lough-light); }
+  .bkw__points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4) var(--s-5); margin-top: var(--s-6); }
+  .bkw__points li { padding: var(--s-4); background: var(--navy-2); border-left: 3px solid var(--blade-hi); border-radius: 0 var(--radius) var(--radius) 0; font-weight: 500; }
+  .bkw__cta { margin-top: var(--s-6); }
+  @media (max-width: 900px) { .bk__steps, .bkw__grid { grid-template-columns: minmax(0, 1fr); } .bkw__fig { aspect-ratio: 16 / 11; } }
+  @media (max-width: 520px) { .bkw__points { grid-template-columns: minmax(0, 1fr); } }
+</style>

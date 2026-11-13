@@ -1,0 +1,62 @@
+---
+import Photo from '../site/Photo.astro';
+import Arrow from '../site/Arrow.astro';
+import { site } from '../../data/site';
+---
+<section class="hero" data-hero>
+  <div class="hero__media">
+    <Photo name="john-helm" alt="John at the helm of a Sea Ray bowrider on the water" priority sizes="100vw" class="hero__img" />
+    <canvas class="hero__water" data-water aria-hidden="true"></canvas>
+  </div>
+  <div class="hero__shade" aria-hidden="true"></div>
+  <div class="container hero__in">
+    <div class="hero__copy">
+      <p class="label label-row hero__k">{site.heroTitle}</p>
+      <h1 class="display hero__h">{site.intro}</h1>
+    </div>
+    <div class="hero__side">
+      <p class="lead hero__sub">{site.introSub}</p>
+      <div class="hero__act">
+        <a class="btn" href="/boats-for-sale">View Boats For Sale<Arrow /></a>
+        <a class="btn btn--ghost" href="/brokerage">Request a valuation<Arrow /></a>
+      </div>
+      <a class="hero__tel" href={`tel:${site.phone.tel}`}><span class="label">Call {site.phone.who}</span>{site.phone.display}</a>
+    </div>
+  </div>
+</section>
+<style>
+  .hero { position: relative; isolation: isolate; min-height: 100svh; display: flex; align-items: flex-end; color: var(--on-dark); background: var(--navy); overflow: hidden; padding-bottom: clamp(2rem, 1rem + 3vw, 4rem); }
+  .hero__media { position: absolute; inset: 0; z-index: -2; }
+  .hero__img, .hero__water { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
+  .hero__water { opacity: 0; transition: opacity 1.2s var(--ease-out); }
+  .hero__water.is-on { opacity: 1; }
+  .hero__shade { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(7, 19, 38, 0.6) 0%, rgba(7, 19, 38, 0) 18%),
+      linear-gradient(0deg, rgba(7, 19, 38, 0.86) 0%, rgba(7, 19, 38, 0.5) 22%, rgba(7, 19, 38, 0) 44%),
+      linear-gradient(90deg, rgba(7, 19, 38, 0.35) 0%, rgba(7, 19, 38, 0) 50%); }
+  .hero__in { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--s-6) var(--s-8); align-items: end; }
+  .hero__k { color: var(--lough-light); margin-bottom: var(--s-4); }
+  .hero__h { font-size: var(--fs-hero); line-height: 0.98; max-width: 17ch; text-shadow: 0 2px 30px rgba(7, 19, 38, 0.35); }
+  .hero__side { display: grid; gap: var(--s-5); justify-items: start; padding-bottom: 0.4rem; }
+  .hero__sub { color: var(--on-dark); max-width: 34ch; }
+  .hero__act { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+  .hero__tel { display: grid; font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.35; }
+  .hero__tel .label { color: var(--on-dark-3); font-size: 0.6875rem; }
+  @media (max-width: 960px) {
+    .hero__in { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .hero { min-height: 0; flex-direction: column; align-items: stretch; padding-top: 0; }
+    .hero__media { position: relative; inset: auto; height: 58svh; min-height: 340px; z-index: -2; }
+    .hero__img, .hero__water { object-position: 30% 55%; }
+    .hero__shade { bottom: auto; height: 58svh; min-height: 340px; background: linear-gradient(180deg, rgba(7, 19, 38, 0.55) 0%, rgba(7, 19, 38, 0) 22%, rgba(7, 19, 38, 0) 62%, rgba(11, 28, 50, 1) 100%); }
+    .hero__in { margin-top: -4.5rem; gap: var(--s-5); }
+    .hero__h { font-size: clamp(1.875rem, 8.4vw, 2.5rem); }
+    .hero__act .btn { flex: 1 1 100%; justify-content: space-between; }
+  }
+</style>
+<script>
+  const start = () => import('../../scripts/hero-water.js').then((m) => m.initHeroWater());
+  if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1500 }); else setTimeout(start, 600);
+</script>

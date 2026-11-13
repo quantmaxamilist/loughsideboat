@@ -1,0 +1,46 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/serviceinhg",
+      "destination": "/servicing",
+      "permanent": true
+    },
+    {
+      "source": "/serviceinhg/",
+      "destination": "/servicing",
+      "permanent": true
+    },
+    {
+      "source": "/2025/12/08/2007-bayliner-192",
+      "destination": "/boats-for-sale/2014-mastercraft-prostar",
+      "permanent": true
+    },
+    {
+      "source": "/2025/12/08/2007-bayliner-192/",
+      "destination": "/boats-for-sale/2014-mastercraft-prostar",
+      "permanent": true
+    },
+    {
+      "source": "/2025/12/09/2005-glastron-gs279-sports-cruiser",
+      "destination": "/boats-for-sale/2005-glastron-gs279-sports-cruiser",
+      "permanent": true
+    },
+    {
+      "source": "/2025/12/09/2005-glastron-gs279-sports-cruiser/",
+      "destination": "/boats-for-sale/2005-glastron-gs279-sports-cruiser",
+      "permanent": true
+    },
+    {
+      "source": "/category/boats-for-sale",
+      "destination": "/boats-for-sale",
+      "permanent": true
+    },
+    {
+      "source": "/category/boats-for-sale/",
+      "destination": "/boats-for-sale",
+      "permanent": true
+    }
+  ]
+}

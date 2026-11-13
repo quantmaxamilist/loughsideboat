@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../site/PageHero.astro';
+import Photo from '../site/Photo.astro';
+import Arrow from '../site/Arrow.astro';
+import EnquiryBand from '../site/EnquiryBand.astro';
+interface Props {
+  title: string; description: string; kicker: string; h1: string; intro: string; cta: string; service: string;
+  heroPhoto: string; heroPos?: string; boxes: string[]; whyTitle: string; why: string[]; sidePhoto: string; sideAlt: string;
+  band: { title: string; text: string };
+}
+const p = Astro.props;
+const href = `/contact?service=${p.service}`;
+---
+<Base title={p.title} description={p.description}>
+  <PageHero kicker={p.kicker} title={p.h1} intro={p.intro} photo={p.heroPhoto} pos={p.heroPos} cta={p.cta} href={href} />
+  <section class="sv section">
+    <div class="container">
+      <ol class="sv__boxes">
+        {p.boxes.map((b, i) => (
+          <li class="sv__box" data-reveal data-reveal-delay={i * 80}>
+            <span class="label">{String(i + 1).padStart(2, '0')}</span>
+            <h2 class="display sv__bt">{b}</h2>
+          </li>
+        ))}
+      </ol>
+      <a class="btn sv__cta" href={href} data-reveal>{p.cta}<Arrow /></a>
+    </div>
+  </section>
+  <slot />
+  <section class="svw section on-mist">
+    <div class="container svw__grid">
+      <div>
+        <p class="label label-row svw__k" data-reveal>{p.kicker}</p>
+        <h2 class="display d2 svw__h" data-reveal>{p.whyTitle}</h2>
+        <ol class:list={['svw__list', { 'svw__list--2': p.why.length > 6 }]}>
+          {p.why.map((w, i) => (<li data-reveal data-reveal-delay={(i % 6) * 50}><span class="label">{String(i + 1).padStart(2, '0')}</span><span>{w}</span></li>))}
+        </ol>
+      </div>
+      <figure class="svw__fig photo" data-reveal><Photo name={p.sidePhoto} alt={p.sideAlt} sizes="(max-width: 860px) 100vw, 40vw" /></figure>
+    </div>
+  </section>
+  <EnquiryBand title={p.band.title} text={p.band.text} />
+</Base>
+<style>
+  .sv__boxes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); }
+  .sv__box { display: grid; align-content: space-between; gap: var(--s-7); min-height: 220px; padding: var(--s-5); background: var(--mist); border-top: 3px solid var(--blade); border-radius: 0 0 var(--radius) var(--radius); }
+  .sv__box .label { color: var(--blade); }
+  .sv__bt { font-size: var(--fs-display-3); line-height: 1.05; max-width: 13ch; overflow-wrap: break-word; }
+  .sv__cta { margin-top: var(--s-6); }
+  .svw__grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); gap: var(--s-8); align-items: start; }
+  .svw__k { color: var(--blade); margin-bottom: var(--s-4); }
+  .svw__h { max-width: 14ch; }
+  .svw__list { margin-top: var(--s-6); border-top: 1px solid var(--line); }
+  .svw__list--2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); border-top: 0; }
+  .svw__list li { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); align-items: baseline; padding-block: 0.9rem; border-bottom: 1px solid var(--line); break-inside: avoid; font-size: 1.0625rem; }
+  .svw__list--2 li:nth-child(-n + 2) { border-top: 1px solid var(--line); }
+  .svw__list .label { color: var(--blade); }
+  .svw__fig { aspect-ratio: 4 / 5; border-radius: var(--radius); position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  @media (max-width: 900px) { .sv__boxes { grid-template-columns: minmax(0, 1fr); } .sv__box { min-height: 0; gap: var(--s-4); } .svw__grid { grid-template-columns: minmax(0, 1fr); } .svw__fig { position: relative; top: 0; aspect-ratio: 16 / 11; } }
+  @media (max-width: 640px) { .svw__list--2 { grid-template-columns: minmax(0, 1fr); } .svw__list--2 li:nth-child(2) { border-top: 0; } }
+</style>

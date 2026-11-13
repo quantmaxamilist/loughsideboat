@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from './Hero.astro';
+import WhySell from './WhySell.astro';
+import Listings from './Listings.astro';
+import People from './People.astro';
+import Offers from './Offers.astro';
+import EnquiryBand from '../site/EnquiryBand.astro';
+import FourBlades from '../wow/FourBlades.astro';
+import Polish from '../wow/Polish.astro';
+import { home } from '../../data/site';
+interface Props { variant: 'a' | 'b'; preview?: boolean }
+const { variant, preview = false } = Astro.props;
+---
+<Base title={home.title} noindex={preview}>
+  <Hero />
+  {variant === 'a' && <FourBlades />}
+  {variant === 'b' && <Offers />}
+  <WhySell tone={variant === 'a' ? 'white' : 'mist'} />
+  {variant === 'b' && <Polish />}
+  <Listings tone={variant === 'a' ? 'dark' : 'light'} />
+  <People />
+  <EnquiryBand title={home.ready.title} text={home.ready.text} />
+  {preview && (
+    <nav class="vs" aria-label="Design variants">
+      <span class="label">Wow</span>
+      <a href="/wow-a" aria-current={variant === 'a' ? 'page' : undefined}>A · Four Blades</a>
+      <a href="/wow-b" aria-current={variant === 'b' ? 'page' : undefined}>B · The Polish</a>
+    </nav>
+  )}
+</Base>
+<style>
+  .vs { position: fixed; right: 16px; bottom: 16px; z-index: 70; display: flex; align-items: center; gap: 4px; padding: 4px; background: rgba(7, 19, 38, 0.92); color: #fff; border-radius: 6px; font-size: 0.8rem; }
+  .vs .label { padding: 0 8px; opacity: 0.6; font-size: 0.65rem; }
+  .vs a { padding: 8px 10px; border-radius: 4px; }
+  .vs a[aria-current] { background: var(--blade); }
+</style>

@@ -1,0 +1,155 @@
+---
+// WOW A — "Four Blades": the Loughside propeller assembles and spins up as one piece; each blade is a window onto
+// the client's own photo for one of the four offers. Plays once at >=50% visible (~2.9s), pauses off screen,
+// list arrives at the end (opacity only, fixed layout), Replay button. Hover a row <-> its blade.
+import m from '../../data/mark.json';
+import photos from '../../data/photos.json';
+import Arrow from '../site/Arrow.astro';
+import { offers } from '../../data/site';
+const boxes = [
+  { x: -132, y: -284, w: 182, h: 240 },
+  { x: 44, y: -132, w: 240, h: 182 },
+  { x: -50, y: 44, w: 182, h: 240 },
+  { x: -284, y: -50, w: 240, h: 182 },
+];
+const pic = (name: string) => { const p = (photos as any)[name]; const w = p.widths.find((x: number) => x >= 960) ?? p.widths.at(-1); return `/img/${name}-${w === 1920 ? 1440 : w}.webp`; };
+const R = 253;
+---
+<section class="fb section on-mist" data-fb aria-labelledby="fb-h">
+  <div class="container fb__grid">
+    <div class="fb__stage">
+      <svg class="fb__svg" viewBox="-300 -300 600 600" aria-hidden="true" data-fb-svg>
+        <defs>
+          {[0, 1, 2, 3].map((i) => (<clipPath id={`fb-c${i}`}><path d={m.blade} transform={`rotate(${i * 90})`} /></clipPath>))}
+        </defs>
+        <g class="fb__ripples" fill="none">
+          <circle r="60" data-ripple /><circle r="60" data-ripple /><circle r="60" data-ripple />
+        </g>
+        <g class="fb__ring-g" data-ring>
+          <path class="fb__ring" d={m.ring} fill="none" stroke-width={m.ringWidth} stroke-linecap="round" pathLength="100" />
+        </g>
+        <g class="fb__rotor" data-rotor>
+          <g class="fb__ghost" data-ghost="1" fill="var(--blade)">{[0, 1, 2, 3].map((i) => <path d={m.blade} transform={`rotate(${i * 90 - 14})`} />)}</g>
+          <g class="fb__ghost" data-ghost="2" fill="var(--blade)">{[0, 1, 2, 3].map((i) => <path d={m.blade} transform={`rotate(${i * 90 - 28})`} />)}</g>
+          {offers.map((o, i) => (
+            <a href={o.href} tabindex="-1" class="fb__blade" data-blade={i} aria-label={o.title}>
+              <g data-blade-scale>
+                <g clip-path={`url(#fb-c${i})`}>
+                  <rect x={boxes[i].x} y={boxes[i].y} width={boxes[i].w} height={boxes[i].h} fill="var(--blade)" />
+                  <image class="fb__img" href={pic(o.photo)} x={boxes[i].x} y={boxes[i].y} width={boxes[i].w} height={boxes[i].h} preserveAspectRatio="xMidYMid slice" />
+                  <path class="fb__tint" d={m.blade} transform={`rotate(${i * 90})`} />
+                </g>
+              </g>
+            </a>
+          ))}
+        </g>
+      </svg>
+      <button class="fb__replay" type="button" data-replay hidden>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.7 0 3.2.8 4.2 2M12.5 1.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        Replay
+      </button>
+    </div>
+    <div class="fb__head">
+      <p class="label label-row fb__k">What we do</p>
+      <h2 id="fb-h" class="display d2">Boats &amp; Services</h2>
+    </div>
+      <ol class="fb__list" data-fb-list>
+        {offers.map((o, i) => (
+          <li data-row={i}>
+            <a href={o.href} class="fb__row" data-row-link={i}>
+              <span class="label fb__n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="fb__txt"><span class="display fb__t">{o.title}</span><span class="fb__d">{o.text}</span></span>
+              <Arrow class="fb__arr" />
+            </a>
+          </li>
+        ))}
+      </ol>
+  </div>
+</section>
+<style>
+  .fb__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: 'stage head' 'stage list'; grid-template-rows: auto 1fr; gap: 0 var(--s-8); align-items: center; }
+  .fb__head { grid-area: head; align-self: end; }
+  .fb__list { grid-area: list; align-self: start; }
+  .fb__stage { grid-area: stage; }
+  .fb__stage { position: relative; aspect-ratio: 1; width: 100%; max-width: 600px; justify-self: center; }
+  .fb__svg { width: 100%; height: 100%; overflow: visible; }
+  .fb__ring { stroke: var(--ink); }
+  .fb__ripples circle { stroke: var(--blade); stroke-width: 1.5; opacity: 0; vector-effect: non-scaling-stroke; }
+  .fb__ghost { opacity: 0; }
+  .fb__img { filter: grayscale(1) brightness(1.18) contrast(1.08); transition: filter 0.45s var(--ease-out); }
+  .fb__tint { fill: var(--blade); mix-blend-mode: multiply; opacity: 1; transition: opacity 0.45s var(--ease-out); }
+  .fb__blade { cursor: pointer; }
+  .fb[data-active] .fb__blade:not(:hover) .fb__img { filter: grayscale(1) brightness(0.9) contrast(1.08); }
+  .fb[data-active='0'] [data-blade='0'] .fb__tint, .fb[data-active='1'] [data-blade='1'] .fb__tint,
+  .fb[data-active='2'] [data-blade='2'] .fb__tint, .fb[data-active='3'] [data-blade='3'] .fb__tint { opacity: 0; }
+  .fb[data-active='0'] [data-blade='0'] .fb__img, .fb[data-active='1'] [data-blade='1'] .fb__img,
+  .fb[data-active='2'] [data-blade='2'] .fb__img, .fb[data-active='3'] [data-blade='3'] .fb__img { filter: none; }
+  .fb__replay { position: absolute; left: 0; bottom: 0; display: inline-flex; align-items: center; gap: 0.5em; min-height: 44px; padding: 0 0.9em; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+  .fb__replay svg { width: 14px; height: 14px; }
+  .fb__replay:hover { color: var(--blade); border-color: var(--blade); }
+  .fb__k { color: var(--blade); margin-bottom: var(--s-4); }
+  .fb__list { margin-top: var(--s-6); border-top: 1px solid var(--line); }
+  .fb__row { position: relative; display: grid; grid-template-columns: 3rem minmax(0, 1fr) 24px; gap: var(--s-3); align-items: start; padding: 1.25rem 0; border-bottom: 1px solid var(--line); transition: background-color var(--dur) var(--ease-out); }
+  .fb__n { color: var(--ink-3); padding-top: 0.5rem; transition: color var(--dur); }
+  .fb__txt { display: grid; gap: 0.35rem; }
+  .fb__t { font-size: var(--fs-display-3); line-height: 1.05; transition: color var(--dur); }
+  .fb__d { color: var(--ink-2); max-width: 46ch; }
+  .fb__arr { width: 20px; height: 20px; margin-top: 0.55rem; color: var(--ink-3); transition: transform var(--dur) var(--ease-out), color var(--dur); }
+  .fb__row:hover .fb__t, .fb__row:focus-visible .fb__t, .fb__row.is-on .fb__t { color: var(--blade); }
+  .fb__row:hover .fb__n, .fb__row.is-on .fb__n { color: var(--blade); }
+  .fb__row:hover .fb__arr, .fb__row.is-on .fb__arr { transform: translateX(4px); color: var(--blade); }
+  @media (max-width: 960px) {
+    .fb__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'stage' 'list'; grid-template-rows: auto; gap: var(--s-6); }
+    .fb__stage { max-width: 380px; }
+    .fb__list { margin-top: 0; }
+  }
+</style>
+<script>
+  import { gsap } from 'gsap';
+  const root = document.querySelector('[data-fb]');
+  if (root) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rotor = root.querySelector('[data-rotor]');
+    const scales = root.querySelectorAll('[data-blade-scale]');
+    const ghosts = root.querySelectorAll('[data-ghost]');
+    const ring = root.querySelector('.fb__ring');
+    const ringG = root.querySelector('[data-ring]');
+    const ripples = root.querySelectorAll('[data-ripple]');
+    const rows = root.querySelectorAll('[data-fb-list] li');
+    const replay = root.querySelector('[data-replay]');
+    const tl = gsap.timeline({ paused: true, onComplete: () => { replay.hidden = false; } });
+    tl.set(rows, { opacity: 0 })
+      .set(rotor, { rotation: -900, scale: 0.7, svgOrigin: '0 0' })
+      .set(scales, { scale: 0, svgOrigin: '0 0' })
+      .set(ring, { strokeDasharray: 100, strokeDashoffset: 100 })
+      .set(ringG, { rotation: 70, svgOrigin: '0 0' })
+      .set(ghosts, { opacity: 0 })
+      .set(ripples, { attr: { r: 40 }, opacity: 0 })
+      .to(scales, { scale: 1, duration: 0.55, ease: 'back.out(1.5)', stagger: 0.06 }, 0)
+      .to(rotor, { rotation: 0, duration: 2.5, ease: 'expo.out' }, 0)
+      .to(rotor, { scale: 1, duration: 1.3, ease: 'power3.out' }, 0)
+      .to(ghosts[0], { opacity: 0.28, duration: 0.25, ease: 'none' }, 0.1).to(ghosts[0], { opacity: 0, duration: 1.1, ease: 'power2.out' }, 0.45)
+      .to(ghosts[1], { opacity: 0.14, duration: 0.25, ease: 'none' }, 0.1).to(ghosts[1], { opacity: 0, duration: 0.9, ease: 'power2.out' }, 0.4)
+      .to(ripples, { attr: { r: 300 }, duration: 1.6, ease: 'power2.out', stagger: 0.3 }, 0.05)
+      .fromTo(ripples, { opacity: 0.55 }, { opacity: 0, duration: 1.6, ease: 'power1.in', stagger: 0.3, immediateRender: false }, 0.05)
+      .to(ring, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, 0.9)
+      .to(ringG, { rotation: 0, duration: 1.4, ease: 'power3.out' }, 0.9)
+      .to(rows, { opacity: 1, duration: 0.45, ease: 'power1.out', stagger: 0.07 }, 2.25);
+
+    let started = false;
+    if (reduce) { tl.progress(1); }
+    else {
+      tl.progress(0).pause();
+      const start = new IntersectionObserver(([e]) => { if (e.isIntersecting && !started) { started = true; tl.play(0); start.disconnect(); } }, { threshold: 0.5 });
+      start.observe(root.querySelector('.fb__stage'));
+      // pause only when the whole section is off screen, so the list never stays hidden while it is being read
+      new IntersectionObserver(([e]) => { if (!started || tl.progress() >= 1) return; e.isIntersecting ? tl.resume() : tl.pause(); }, { threshold: 0 }).observe(root);
+    }
+    replay.addEventListener('click', () => { replay.hidden = true; tl.play(0); });
+
+    // hover sync: list row <-> blade
+    const set = (i) => { if (i == null) root.removeAttribute('data-active'); else root.setAttribute('data-active', String(i)); root.querySelectorAll('.fb__row').forEach((r) => r.classList.toggle('is-on', r.dataset.rowLink === String(i))); };
+    root.querySelectorAll('.fb__row').forEach((r) => { r.addEventListener('pointerenter', () => set(r.dataset.rowLink)); r.addEventListener('pointerleave', () => set(null)); r.addEventListener('focus', () => set(r.dataset.rowLink)); r.addEventListener('blur', () => set(null)); });
+    root.querySelectorAll('[data-blade]').forEach((b) => { b.addEventListener('pointerenter', () => set(b.dataset.blade)); b.addEventListener('pointerleave', () => set(null)); });
+  }
+</script>

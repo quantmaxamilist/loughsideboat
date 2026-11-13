@@ -1,0 +1,6 @@
+---
+import ServicePage from '../components/services/ServicePage.astro';
+import { servicing as s } from '../data/site';
+---
+<ServicePage title={s.title} description={`${s.h1}. ${s.intro}. ${s.band.text}.`} kicker="Servicing" h1={s.h1} intro={s.intro} cta={s.cta} service="servicing"
+  heroPhoto="mc-shed" heroPos="50% 50%" boxes={s.boxes} whyTitle={s.whyTitle} why={s.why} sidePhoto="trailer" sideAlt="Bowrider on a triple-axle trailer" band={s.band} />

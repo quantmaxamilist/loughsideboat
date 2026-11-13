@@ -1,0 +1,39 @@
+---
+// Logo lockup: vector propeller + wordmark set in Questrial (closest free match to the original's geometric face).
+// As in the original, the wordmark overlaps the mark; here the overlap is a true knockout (SVG mask), so it works
+// on any background — photo, navy or white.
+import m from '../../data/mark.json';
+interface Props { tone?: 'light' | 'dark'; class?: string }
+const { tone = 'light', class: cls = '' } = Astro.props;
+const id = 'lk' + Math.random().toString(36).slice(2, 8);
+const text = tone === 'light' ? '#ffffff' : '#141a24';
+const sub = tone === 'light' ? 'rgba(255,255,255,.8)' : '#3a4150';
+const blade = tone === 'light' ? '#ffffff' : '#2b388f';
+const ring = tone === 'light' ? 'rgba(255,255,255,.85)' : '#141a24';
+const t1 = { x: -124, y: 46, size: 126, len: 785 };
+const t2 = { x: 209, y: 132, size: 70, len: 452 };
+---
+<svg class={`logo logo--${tone} ${cls}`} viewBox="-282 -282 952 564" role="img" aria-label="Loughside Boat Sales">
+  <defs>
+    <mask id={id} maskUnits="userSpaceOnUse" x="-300" y="-300" width="1000" height="600">
+      <rect x="-300" y="-300" width="1000" height="600" fill="#fff" />
+      <g font-family="Questrial, 'Century Gothic', sans-serif" fill="#000" stroke="#000" stroke-linejoin="round">
+        <text x={t1.x} y={t1.y} font-size={t1.size} stroke-width="22" textLength={t1.len} lengthAdjust="spacingAndGlyphs">LOUGHSIDE</text>
+        <text x={t2.x} y={t2.y} font-size={t2.size} stroke-width="16" textLength={t2.len} lengthAdjust="spacingAndGlyphs">BOAT SALES</text>
+      </g>
+    </mask>
+  </defs>
+  <g mask={`url(#${id})`}>
+    <g fill={blade} class="logo__blades">
+      <path d={m.blade} /><path d={m.blade} transform="rotate(90)" /><path d={m.blade} transform="rotate(180)" /><path d={m.blade} transform="rotate(270)" />
+    </g>
+    <path d={m.ring} fill="none" stroke={ring} stroke-width={m.ringWidth} stroke-linecap="round" />
+  </g>
+  <g font-family="Questrial, 'Century Gothic', sans-serif" aria-hidden="true">
+    <text x={t1.x} y={t1.y} font-size={t1.size} fill={text} textLength={t1.len} lengthAdjust="spacingAndGlyphs">LOUGHSIDE</text>
+    <text x={t2.x} y={t2.y} font-size={t2.size} fill={sub} textLength={t2.len} lengthAdjust="spacingAndGlyphs">BOAT SALES</text>
+  </g>
+</svg>
+<style>
+  .logo { width: auto; height: 100%; overflow: visible; }
+</style>

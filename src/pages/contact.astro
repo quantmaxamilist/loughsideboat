@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Arrow from '../components/site/Arrow.astro';
+import { contact as c, site } from '../data/site';
+import { boats } from '../data/boats';
+// Tick-box labels are neutral UI microcopy for the services named on the old site.
+const services = [
+  { v: 'buying', l: 'Buying a boat' },
+  { v: 'selling', l: 'Selling my boat' },
+  { v: 'sourcing', l: 'Sourcing a boat' },
+  { v: 'detailing', l: 'Detailing' },
+  { v: 'servicing', l: 'Servicing' },
+];
+---
+<Base title={c.title} description={`${c.intro} Call ${site.phones.map((p) => `${p.who} on ${p.display}`).join(' or ')}.`}>
+  <PageHero kicker="Contact" title={c.h1} intro={c.intro} compact />
+  <section class="ct section">
+    <div class="container ct__grid">
+      <aside class="ct__info">
+        <h2 class="label ct__h">Phone</h2>
+        <ul class="ct__tels">
+          {site.phones.map((p) => (<li><a href={`tel:${p.tel}`}><span class="label">{p.who}</span><span class="display ct__num">{p.display}</span></a></li>))}
+        </ul>
+        <h2 class="label ct__h">Email</h2>
+        <a class="ct__mail link-u" href={`mailto:${site.email}`}>{site.email}</a>
+        <h2 class="label ct__h">Based on</h2>
+        <p class="ct__loc">Lough Erne, County Fermanagh</p>
+      </aside>
+      <div class="ct__form-wrap">
+        <h2 class="display d3">{c.formTitle}</h2>
+        <p class="ct__intro">{c.formIntro}</p>
+        <form class="ct__form" data-form novalidate>
+          <fieldset class="ct__set">
+            <legend class="label">What can we help with?</legend>
+            <div class="ct__ticks">
+              {services.map((s) => (<label class="ct__tick"><input type="checkbox" name="service" value={s.v} /><span>{s.l}</span></label>))}
+            </div>
+          </fieldset>
+          <label class="ct__field ct__field--full">
+            <span class="label">Boat (optional)</span>
+            <select name="boat">
+              <option value="">—</option>
+              {boats.map((b) => <option value={b.slug}>{b.title} · {b.price}</option>)}
+            </select>
+          </label>
+          <label class="ct__field"><span class="label">{c.fields.name}</span><input name="name" autocomplete="name" required /></label>
+          <label class="ct__field"><span class="label">{c.fields.email}</span><input name="email" type="email" autocomplete="email" required /></label>
+          <label class="ct__field ct__field--full"><span class="label">{c.fields.phone}</span><input name="phone" type="tel" autocomplete="tel" /></label>
+          <label class="ct__field ct__field--full"><span class="label">{c.fields.message}</span><textarea name="message" rows="6" required></textarea></label>
+          <p class="ct__err" data-form-err role="alert" hidden>Please add your name, a valid email address and a message.</p>
+          <button class="btn ct__submit" type="submit">{c.fields.submit}<Arrow /></button>
+          <p class="ct__done" data-form-done role="status" hidden>Your email app should now open with the enquiry ready to send to {site.email}.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .ct__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--s-8); align-items: start; }
+  .ct__info { position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  .ct__h { color: var(--blade); margin: var(--s-6) 0 var(--s-3); }
+  .ct__h:first-child { margin-top: 0; }
+  .ct__tels a { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); padding-block: 0.8rem; border-bottom: 1px solid var(--line); }
+  .ct__tels li:first-child a { border-top: 1px solid var(--line); }
+  .ct__tels .label { color: var(--ink-3); }
+  .ct__num { font-size: var(--fs-display-3); line-height: 1; transition: color var(--dur); }
+  .ct__tels a:hover .ct__num { color: var(--blade); }
+  .ct__mail { font-family: var(--font-mono); font-size: 1rem; overflow-wrap: anywhere; }
+  .ct__loc { color: var(--ink-2); }
+  .ct__form-wrap { padding: clamp(1.5rem, 1rem + 2vw, 3rem); background: var(--mist); border-radius: var(--radius-lg); }
+  .ct__intro { margin-top: var(--s-3); color: var(--ink-2); max-width: 52ch; }
+  .ct__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); margin-top: var(--s-6); }
+  .ct__set { grid-column: 1 / -1; border: 0; padding: 0; margin: 0; }
+  .ct__set legend { color: var(--ink-3); margin-bottom: var(--s-3); }
+  .ct__ticks { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .ct__tick { position: relative; display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; }
+  .ct__tick input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .ct__tick span { display: inline-flex; align-items: center; gap: 0.6em; min-height: 44px; padding: 0 1em; border: 1px solid rgba(13, 22, 38, 0.25); border-radius: var(--radius); background: var(--white); font-weight: 500; transition: background-color var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast); }
+  .ct__tick span::before { content: ''; width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: 2px; flex: none; }
+  .ct__tick input:checked + span { background: var(--blade); border-color: var(--blade); color: var(--white); }
+  .ct__tick input:checked + span::before { background: var(--white); box-shadow: inset 0 0 0 2.5px var(--blade); border-color: var(--white); }
+  .ct__tick input:focus-visible + span { outline: 2px solid var(--blade); outline-offset: 2px; }
+  .ct__field { display: grid; gap: var(--s-2); }
+  .ct__field--full { grid-column: 1 / -1; }
+  .ct__field .label { color: var(--ink-3); }
+  .ct__field input, .ct__field textarea, .ct__field select { width: 100%; min-height: 50px; padding: 0.8rem 0.9rem; border: 1px solid rgba(13, 22, 38, 0.22); border-radius: var(--radius); background: var(--white); font-size: 1rem; }
+  .ct__field textarea { resize: vertical; }
+  .ct__field input:focus, .ct__field textarea:focus, .ct__field select:focus { outline: 2px solid var(--blade); outline-offset: 0; border-color: var(--blade); }
+  .ct__err { grid-column: 1 / -1; color: #b3261e; font-weight: 500; }
+  .ct__submit { justify-self: start; }
+  .ct__done { grid-column: 1 / -1; color: var(--blade); font-weight: 500; }
+  @media (max-width: 900px) { .ct__grid { grid-template-columns: minmax(0, 1fr); } .ct__info { position: static; } }
+  @media (max-width: 560px) { .ct__form { grid-template-columns: minmax(0, 1fr); } }
+</style>
+<script>
+  // Pre-tick from ?service=<slug> or ?boat=<slug>. Until a form backend (e.g. Formspree) is connected,
+  // submit opens the visitor's email app with the enquiry filled in.
+  import { site } from '../data/site';
+  const form = document.querySelector('[data-form]');
+  if (form) {
+    const q = new URLSearchParams(location.search);
+    const svc = q.get('service'), boat = q.get('boat');
+    if (svc) form.querySelectorAll('input[name=service]').forEach((i) => { if (i.value === svc) i.checked = true; });
+    if (boat) { const sel = form.querySelector('select[name=boat]'); if ([...sel.options].some((o) => o.value === boat)) { sel.value = boat; const b = form.querySelector('input[value=buying]'); if (b) b.checked = true; } }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = new FormData(form); const err = form.querySelector('[data-form-err]');
+      const ok = String(f.get('name')).trim() && /.+@.+\..+/.test(String(f.get('email'))) && String(f.get('message')).trim();
+      err.hidden = !!ok; if (!ok) return;
+      const sel = form.querySelector('select[name=boat]');
+      const lines = [
+        `Name: ${f.get('name')}`, `Email: ${f.get('email')}`, `Phone: ${f.get('phone') || '-'}`,
+        `Interested in: ${f.getAll('service').join(', ') || '-'}`, `Boat: ${sel.value ? sel.options[sel.selectedIndex].text : '-'}`, '', String(f.get('message')),
+      ];
+      location.href = `mailto:${site.email}?subject=${encodeURIComponent('Website enquiry')}&body=${encodeURIComponent(lines.join('\n'))}`;
+      form.querySelector('[data-form-done]').hidden = false;
+    });
+  }
+</script>
