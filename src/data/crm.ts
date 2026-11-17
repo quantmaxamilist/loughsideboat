@@ -60,5 +60,5 @@ export async function getBoats(): Promise<Boat[]> {
   }
 }
 
-// Short CDN cache so changes made in the CRM show within about a minute.
-export const LISTING_CACHE = 'public, max-age=0, s-maxage=60, stale-while-revalidate=600';
+// Short CDN cache (no stale copies) so changes made in the CRM show on the next refresh after ~10s.
+export const LISTING_CACHE = 'public, max-age=0, s-maxage=10';
