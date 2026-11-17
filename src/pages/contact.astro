@@ -3,7 +3,10 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/site/PageHero.astro';
 import Arrow from '../components/site/Arrow.astro';
 import { contact as c, site } from '../data/site';
-import { boats } from '../data/boats';
+import { getBoats, LISTING_CACHE } from '../data/crm';
+export const prerender = false;
+const boats = (await getBoats()).filter((x) => !x.sold);
+Astro.response.headers.set('Cache-Control', LISTING_CACHE);
 // Tick-box labels are neutral UI microcopy for the services named on the old site.
 const services = [
   { v: 'buying', l: 'Buying a boat' },

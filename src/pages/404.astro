@@ -2,6 +2,9 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/site/PageHero.astro';
 import Arrow from '../components/site/Arrow.astro';
+// On demand so missing boat pages (rendered on demand from the CRM) can show it with a real 404 status.
+export const prerender = false;
+Astro.response.status = 404;
 ---
 <Base title="Page not found | Loughside" noindex>
   <PageHero kicker="404" title="Page not found" intro="The page you were looking for has moved or no longer exists." compact>

@@ -8,17 +8,17 @@ const { boat, tone = 'light', i = 0 } = Astro.props;
 <article class:list={['card', `card--${tone}`]} data-reveal data-reveal-delay={i * 90}>
   <a class="card__media photo" href={`/boats-for-sale/${boat.slug}`} aria-label={boat.title}>
     <Photo name={boat.photos[0]} alt={boat.title} sizes="(max-width: 760px) 100vw, 45vw" />
-    {boat.status && <span class="card__status label"><i></i>{boat.status}</span>}
+    {boat.status && <span class:list={['card__status label', { 'is-sold': boat.sold }]}><i></i>{boat.status}</span>}
   </a>
   <div class="card__body">
     <p class="label card__meta"><span>{boat.year}</span><span>{boat.make}</span>{boat.location && <span>{boat.location}</span>}</p>
     <h3 class="display card__h"><a href={`/boats-for-sale/${boat.slug}`}>{boat.title}</a></h3>
-    <p class="card__sum">{boat.location ? boat.headline : boat.summary}</p>
+    {(boat.headline || boat.summary) && <p class="card__sum">{boat.headline || boat.summary}</p>}
     <div class="card__foot">
       <p class="card__price">{boat.price}</p>
       <div class="card__act">
         <a class="btn" href={`/boats-for-sale/${boat.slug}`}>View boat<Arrow /></a>
-        <a class:list={['btn', tone === 'dark' ? 'btn--ghost' : 'btn--ghost-dark']} href={`/contact?boat=${boat.slug}`}>Enquire</a>
+        {!boat.sold && <a class:list={['btn', tone === 'dark' ? 'btn--ghost' : 'btn--ghost-dark']} href={`/contact?boat=${boat.slug}`}>Enquire</a>}
       </div>
     </div>
   </div>
@@ -31,6 +31,7 @@ const { boat, tone = 'light', i = 0 } = Astro.props;
   .card__media:hover :global(img) { transform: scale(1.035); }
   .card__status { position: absolute; left: var(--s-4); top: var(--s-4); display: inline-flex; align-items: center; gap: 0.55em; padding: 0.55em 0.8em; background: rgba(7, 19, 38, 0.82); color: var(--white); border-radius: var(--radius); }
   .card__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--go); box-shadow: 0 0 0 3px rgba(63, 174, 122, 0.25); }
+  .card__status.is-sold i { background: #f2a33a; box-shadow: 0 0 0 3px rgba(242, 163, 58, 0.25); }
   .card__body { display: grid; align-content: start; gap: var(--s-3); padding-top: var(--s-5); }
   .card__meta { display: flex; flex-wrap: wrap; gap: 0.4em 1.1em; color: var(--ink-3); }
   .card--dark .card__meta { color: var(--on-dark-3); }

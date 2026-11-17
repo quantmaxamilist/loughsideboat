@@ -1,16 +1,18 @@
 ---
 import BoatCard from '../boats/BoatCard.astro';
 import Arrow from '../site/Arrow.astro';
-import { boats } from '../../data/boats';
+import { getBoats } from '../../data/crm';
 import { boatsPage } from '../../data/site';
 interface Props { tone?: 'dark' | 'light' }
 const { tone = 'dark' } = Astro.props;
+const boats = await getBoats();
+const live = boats.filter((b) => !b.sold).length;
 ---
 <section class:list={['lst section', tone === 'dark' ? 'on-dark' : 'on-mist']}>
   <div class="container">
     <div class="lst__head">
       <div>
-        <p class="label label-row lst__k" data-reveal>{boats.length} boats listed</p>
+        <p class="label label-row lst__k" data-reveal>{live} {live === 1 ? 'boat' : 'boats'} for sale</p>
         <h2 class="display d2" data-reveal>Boats for sale</h2>
       </div>
       <p class="lst__intro" data-reveal>{boatsPage.intro}</p>

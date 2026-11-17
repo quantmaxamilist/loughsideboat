@@ -5,3 +5,4 @@ dist/
 _src/
 review/
 DIRECTION.md
+.vercel/

@@ -4,3 +4,4 @@ Disallow: /wow-a
 Disallow: /wow-b
 
 Sitemap: https://loughsideboatsales.co.uk/sitemap-index.xml
+Sitemap: https://loughsideboatsales.co.uk/sitemap-boats.xml

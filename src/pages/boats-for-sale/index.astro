@@ -3,11 +3,15 @@ import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/site/PageHero.astro';
 import BoatCard from '../../components/boats/BoatCard.astro';
 import EnquiryBand from '../../components/site/EnquiryBand.astro';
-import { boats } from '../../data/boats';
+import { getBoats, LISTING_CACHE } from '../../data/crm';
 import { boatsPage as b, sellBand } from '../../data/site';
+export const prerender = false;
+const boats = await getBoats();
+const live = boats.filter((x) => !x.sold).length;
+Astro.response.headers.set('Cache-Control', LISTING_CACHE);
 ---
 <Base title={b.title} description={`${b.intro} ${boats.map((x) => x.title).join(', ')}.`}>
-  <PageHero kicker={`${boats.length} boats listed`} title={b.h1} intro={b.intro} photo="trailer" pos="50% 55%" cta="Send an Enquiry" href="/contact?service=buying" />
+  <PageHero kicker={`${live} ${live === 1 ? 'boat' : 'boats'} for sale`} title={b.h1} intro={b.intro} photo="trailer" pos="50% 55%" cta="Send an Enquiry" href="/contact?service=buying" />
   <section class="bl section">
     <div class="container bl__grid">
       {boats.map((x, i) => <BoatCard boat={x} tone="light" i={i} />)}

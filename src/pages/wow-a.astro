@@ -1,4 +1,7 @@
 ---
 import HomePage from '../components/home/HomePage.astro';
+import { LISTING_CACHE } from '../data/crm';
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', LISTING_CACHE);
 ---
 <HomePage variant="a" preview />

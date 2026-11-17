@@ -3,6 +3,9 @@
 //           /2025/12/09/2005-glastron-gs279-sports-cruiser/
 // Emoji section markers from the old posts are dropped; section headings kept.
 
+// A photo is either a key in photos.json (built-in images) or a ready-made remote image from the CRM.
+export type PhotoRef = string | { src: string; srcset: string; w: number; h: number };
+
 export type Boat = {
   slug: string;
   title: string; // also the page <title> prefix, exactly as on the old site
@@ -13,12 +16,13 @@ export type Boat = {
   price: string;
   priceNote?: string;
   status?: string;
+  sold?: boolean;
   location?: string;
   summary: string; // shown on the listing card
   sections: { title: string; items: string[] }[];
   body: string[];
   viewing?: string;
-  photos: string[]; // keys in photos.json; first is the cover
+  photos: PhotoRef[]; // first is the cover
   oldUrl: string;
 };
 

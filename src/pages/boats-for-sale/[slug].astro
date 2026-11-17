@@ -4,16 +4,21 @@ import Photo from '../../components/site/Photo.astro';
 import Arrow from '../../components/site/Arrow.astro';
 import BoatCard from '../../components/boats/BoatCard.astro';
 import EnquiryBand from '../../components/site/EnquiryBand.astro';
-import { boats } from '../../data/boats';
+import { getBoats, LISTING_CACHE } from '../../data/crm';
+import type { PhotoRef } from '../../data/boats';
 import { site, sellBand } from '../../data/site';
 import photos from '../../data/photos.json';
-export function getStaticPaths() { return boats.map((boat) => ({ params: { slug: boat.slug }, props: { boat } })); }
-const { boat } = Astro.props;
-const others = boats.filter((x) => x.slug !== boat.slug);
+// Rendered on demand from the CRM (cached ~60s at the edge) so new boats appear without a rebuild.
+export const prerender = false;
+const all = await getBoats();
+const boat = all.find((x) => x.slug === Astro.params.slug);
+if (!boat) return Astro.rewrite('/404');
+Astro.response.headers.set('Cache-Control', LISTING_CACHE);
+const others = all.filter((x) => x.slug !== boat.slug && !x.sold).slice(0, 2);
 const P = photos as any;
-const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1440).at(-1)}.webp`;
+const big = (n: PhotoRef) => (typeof n === 'string' ? { src: `/img/${n}-${P[n].widths.filter((w: number) => w <= 1440).at(-1)}.webp`, w: P[n].w, h: P[n].h } : { src: n.src, w: n.w, h: n.h });
 ---
-<Base title={`${boat.title} | Loughside`} description={`${boat.title} — ${boat.price}. ${boat.headline ?? ''} ${boat.body[0]}`} image={big(boat.photos[0])}>
+<Base title={`${boat.title} | Loughside`} description={`${boat.title} — ${boat.price}. ${boat.headline ?? ''} ${boat.body[0] ?? ''}`.trim()} image={boat.photos[0] ? big(boat.photos[0]).src : undefined}>
   <section class="bt">
     <div class="container">
       <nav class="label bt__crumb" aria-label="Breadcrumb"><a class="link-u" href="/boats-for-sale">Boats for Sale</a><span aria-hidden="true">/</span><span>{boat.make}</span></nav>
@@ -21,7 +26,7 @@ const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1
         <div class="bt__gallery">
           <button class="bt__main photo" type="button" data-open="0" aria-label={`Open photo 1 of ${boat.photos.length}`}>
             <Photo name={boat.photos[0]} alt={boat.title} priority sizes="(max-width: 960px) 100vw, 60vw" />
-            {boat.status && <span class="bt__status label"><i></i>{boat.status}</span>}
+            {boat.status && <span class:list={['bt__status label', { 'is-sold': boat.sold }]}><i></i>{boat.status}</span>}
           </button>
           <ul class="bt__thumbs">
             {boat.photos.slice(1).map((ph, i) => (
@@ -39,7 +44,7 @@ const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1
             {boat.location && <div><dt class="label">Location</dt><dd>{boat.location}</dd></div>}
           </dl>
           <div class="bt__act">
-            <a class="btn" href={`/contact?boat=${boat.slug}`}>Enquire about this boat<Arrow /></a>
+            {boat.sold ? <a class="btn" href="/contact?service=buying">Enquire about a similar boat<Arrow /></a> : <a class="btn" href={`/contact?boat=${boat.slug}`}>Enquire about this boat<Arrow /></a>}
             <a class="bt__tel" href={`tel:${site.phone.tel}`}><span class="label">Call {site.phone.who}</span>{site.phone.display}</a>
           </div>
         </div>
@@ -80,7 +85,7 @@ const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1
     <button class="lb__btn lb__next" type="button" data-lb-next aria-label="Next photo"><Arrow /></button>
     <button class="lb__close" type="button" data-lb-close aria-label="Close"><i></i><i></i></button>
   </dialog>
-  <script is:inline type="application/json" data-lb-list set:html={JSON.stringify(boat.photos.map((n) => ({ src: big(n), w: P[n].w, h: P[n].h })))}></script>
+  <script is:inline type="application/json" data-lb-list set:html={JSON.stringify(boat.photos.map(big))}></script>
 </Base>
 <style>
   .bt { padding-top: calc(var(--header-h) + var(--s-6)); padding-bottom: var(--s-8); background: var(--navy); color: var(--on-dark); }
@@ -90,6 +95,7 @@ const big = (n: string) => `/img/${n}-${P[n].widths.filter((w: number) => w <= 1
   .bt__main { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; border-radius: var(--radius); cursor: zoom-in; }
   .bt__status { position: absolute; left: var(--s-4); top: var(--s-4); display: inline-flex; align-items: center; gap: 0.55em; padding: 0.55em 0.8em; background: rgba(7, 19, 38, 0.82); color: var(--white); border-radius: var(--radius); }
   .bt__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--go); }
+  .bt__status.is-sold i { background: #f2a33a; }
   .bt__thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-3); }
   .bt__thumbs button { display: block; width: 100%; aspect-ratio: 1; border-radius: var(--radius); cursor: zoom-in; }
   .bt__thumbs button :global(img), .bt__main :global(img) { transition: transform 0.8s var(--ease-out); }

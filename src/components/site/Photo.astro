@@ -1,16 +1,24 @@
 ---
 // Responsive graded photo from public/img (built by scripts/photos.py). Width/height carried to prevent CLS.
+// `name` can also be a remote photo from the CRM ({ src, srcset, w, h }).
 import photos from '../../data/photos.json';
-interface Props { name: string; alt: string; sizes?: string; class?: string; loading?: 'lazy' | 'eager'; priority?: boolean; pos?: string }
+import type { PhotoRef } from '../../data/boats';
+interface Props { name: PhotoRef; alt: string; sizes?: string; class?: string; loading?: 'lazy' | 'eager'; priority?: boolean; pos?: string }
 const { name, alt, sizes = '100vw', class: cls = '', loading = 'lazy', priority = false, pos } = Astro.props;
-const p = (photos as any)[name];
-if (!p) throw new Error('unknown photo ' + name);
-const srcset = p.widths.map((w: number) => `/img/${name}-${w}.webp ${w}w`).join(', ');
-const largest = p.widths.filter((w: number) => w <= 1440).at(-1);
+let src: string, srcset: string, p: { w: number; h: number };
+if (typeof name === 'string') {
+  const local = (photos as any)[name];
+  if (!local) throw new Error('unknown photo ' + name);
+  p = local;
+  srcset = local.widths.map((w: number) => `/img/${name}-${w}.webp ${w}w`).join(', ');
+  src = `/img/${name}-${local.widths.filter((w: number) => w <= 1440).at(-1)}.webp`;
+} else {
+  p = name; src = name.src; srcset = name.srcset;
+}
 ---
 <img
   class={cls}
-  src={`/img/${name}-${largest}.webp`}
+  src={src}
   srcset={srcset}
   sizes={sizes}
   width={p.w}
