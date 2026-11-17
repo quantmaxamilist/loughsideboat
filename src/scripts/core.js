@@ -1,4 +1,4 @@
-// Shared site behaviour: smooth scroll, reveals, header state, menu, page transitions, cursor.
+// Shared site behaviour: smooth scroll, reveals, header state, menu, cursor. (Page changes use CSS view transitions.)
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -54,32 +54,6 @@ function header() {
   menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { if (lenis) lenis.start(); document.documentElement.style.overflow = ''; }));
 }
 
-function transitions() {
-  const pt = document.querySelector('[data-pt]');
-  if (!pt) return;
-  const KEY = 'lough-pt';
-  let came = false;
-  try { came = sessionStorage.getItem(KEY) === '1'; sessionStorage.removeItem(KEY); } catch (e) {}
-  if (came && !reduce) {
-    gsap.set(pt, { yPercent: 0 });
-    gsap.to(pt, { yPercent: -100, duration: 0.4, ease: 'power3.inOut', delay: 0.02, onComplete: () => gsap.set(pt, { yPercent: 100 }) });
-  }
-  addEventListener('pageshow', (e) => { if (e.persisted) gsap.set(pt, { yPercent: 100 }); });
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest?.('a');
-    if (!a || reduce) return;
-    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    const href = a.getAttribute('href');
-    if (!href || href.startsWith('#') || a.target === '_blank' || a.hasAttribute('download') || /^(tel|mailto):/.test(href)) return;
-    const url = new URL(a.href, location.href);
-    if (url.origin !== location.origin) return;
-    if (url.pathname === location.pathname && url.search === location.search) { if (url.hash) return; }
-    e.preventDefault();
-    try { sessionStorage.setItem(KEY, '1'); } catch (err) {}
-    gsap.fromTo(pt, { yPercent: 100 }, { yPercent: 0, duration: 0.3, ease: 'power3.in', onComplete: () => { location.href = url.href; } });
-  });
-}
-
 function cursor() {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches || reduce) return;
   const c = document.querySelector('[data-cursor]');
@@ -96,6 +70,6 @@ function cursor() {
 
 export function getLenis() { return lenis; }
 export function boot() {
-  smooth(); reveals(); header(); transitions(); cursor();
+  smooth(); reveals(); header(); cursor();
   if (import.meta.env.DEV) window.__lough = { lenis, ScrollTrigger, gsap };
 }

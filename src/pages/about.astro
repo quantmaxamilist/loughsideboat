@@ -7,7 +7,7 @@ import EnquiryBand from '../components/site/EnquiryBand.astro';
 import { about as a } from '../data/site';
 ---
 <Base title={a.title} description={a.intro}>
-  <PageHero kicker="About" title={a.h1} intro={a.intro} photo="pontoon" pos="50% 40%" cta="Request a valuation" href="/contact?service=selling" />
+  <PageHero kicker="About" title={a.h1} intro={a.intro} photo="stern" pos="50% 30%" posMobile="55% 40%" tall cta="Request a valuation" href="/contact?service=selling" />
   <section class="ab section">
     <div class="container ab__grid">
       {a.people.map((p, i) => (

@@ -3,11 +3,11 @@
 import Photo from './Photo.astro';
 import Arrow from './Arrow.astro';
 import { site } from '../../data/site';
-interface Props { kicker: string; title: string; intro?: string; photo?: string; pos?: string; cta?: string; href?: string; compact?: boolean }
-const { kicker, title, intro, photo, pos = '50% 50%', cta, href = '/contact', compact = false } = Astro.props;
+interface Props { kicker: string; title: string; intro?: string; photo?: string; pos?: string; posMobile?: string; cta?: string; href?: string; compact?: boolean; tall?: boolean }
+const { kicker, title, intro, photo, pos = '50% 50%', posMobile, cta, href = '/contact', compact = false, tall = false } = Astro.props;
 ---
-<section class:list={['ph', { 'ph--compact': compact, 'ph--photo': !!photo }]}>
-  {photo && <div class="ph__bg"><Photo name={photo} alt="" priority sizes="100vw" pos={pos} /></div>}
+<section class:list={['ph', { 'ph--compact': compact, 'ph--photo': !!photo, 'ph--tall': tall }]}>
+  {photo && <div class="ph__bg" style={`--pos:${pos};--pos-m:${posMobile ?? pos}`}><Photo name={photo} alt="" priority sizes="100vw" /></div>}
   <div class="ph__shade" aria-hidden="true"></div>
   <div class="container ph__in">
     <p class="label label-row ph__k">{kicker}</p>
@@ -23,8 +23,9 @@ const { kicker, title, intro, photo, pos = '50% 50%', cta, href = '/contact', co
 <style>
   .ph { position: relative; isolation: isolate; background: var(--navy); color: var(--on-dark); min-height: min(78svh, 760px); display: flex; align-items: flex-end; padding-top: calc(var(--header-h) + var(--s-8)); padding-bottom: clamp(3rem, 2rem + 4vw, 6rem); overflow: hidden; }
   .ph--compact { min-height: 0; }
+  .ph--tall { min-height: 100svh; }
   .ph__bg { position: absolute; inset: 0; z-index: -2; }
-  .ph__bg :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ph__bg :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos); }
   .ph__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(7, 19, 38, 0.82) 0%, rgba(7, 19, 38, 0.55) 38%, rgba(7, 19, 38, 0.08) 68%, rgba(7, 19, 38, 0) 100%), linear-gradient(0deg, rgba(7, 19, 38, 0.65) 0%, rgba(7, 19, 38, 0) 45%), linear-gradient(180deg, rgba(7, 19, 38, 0.55) 0%, rgba(7, 19, 38, 0) 22%); }
   .ph:not(.ph--photo) .ph__shade { background: radial-gradient(120% 90% at 85% 0%, var(--navy-2) 0%, var(--navy) 60%); }
   .ph__in { position: relative; }
@@ -37,6 +38,7 @@ const { kicker, title, intro, photo, pos = '50% 50%', cta, href = '/contact', co
   @media (max-width: 760px) {
     .ph { min-height: min(86svh, 720px); }
     .ph--compact { min-height: 0; }
+    .ph__bg :global(img) { object-position: var(--pos-m); }
     .ph__shade { background: linear-gradient(0deg, rgba(7, 19, 38, 0.9) 0%, rgba(7, 19, 38, 0.62) 45%, rgba(7, 19, 38, 0.15) 75%, rgba(7, 19, 38, 0.45) 100%); }
   }
 </style>

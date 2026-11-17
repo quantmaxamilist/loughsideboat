@@ -7,7 +7,7 @@ import EnquiryBand from '../components/site/EnquiryBand.astro';
 import { brokerage as b, sellBand } from '../data/site';
 ---
 <Base title={b.title} description={`${b.intro} Independent, local broker on Lough Erne.`}>
-  <PageHero kicker="Brokerage" title={b.h1} intro={b.intro} photo="stern" pos="50% 62%" cta={b.cta} href="/contact?service=selling" />
+  <PageHero kicker="Brokerage" title={b.h1} intro={b.intro} photo="pontoon" pos="50% 40%" posMobile="42% 45%" tall cta={b.cta} href="/contact?service=selling" />
   <section class="bk section">
     <div class="container">
       <p class="label label-row bk__k" data-reveal>How it works</p>
@@ -24,7 +24,7 @@ import { brokerage as b, sellBand } from '../data/site';
   </section>
   <section class="bkw section on-dark">
     <div class="container bkw__grid">
-      <figure class="bkw__fig photo" data-reveal><Photo name="pontoon" alt="Sea Ray bowrider moored at a pontoon on the lough" sizes="(max-width: 860px) 100vw, 45vw" /></figure>
+      <figure class="bkw__fig photo" data-reveal><Photo name="stern" alt="Sea Ray bowrider moored at a pontoon" sizes="(max-width: 860px) 100vw, 45vw" pos="50% 38%" /></figure>
       <div>
         <p class="label label-row bkw__k" data-reveal>Brokerage</p>
         <h2 class="display d2" data-reveal>{b.whyTitle}</h2>
